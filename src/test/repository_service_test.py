@@ -38,22 +38,22 @@ def test_invalid_url(test_app):
     assert response.status_code == 404
 
 
-@patch('app.services.repository_services.resilient_request')
+@patch('services.repository_services.resilient_request')
 def test_get_repositories_since_invalid_params(mock_resilient_request):
     mock_resilient_request.return_value = {'items': 'test'}
     response = client.get("/repositories/popular?since_date=2023-06-35&language=python&top_n=100")
     assert response.status_code == 200
 
 
-@patch('app.services.repository_services.resilient_request')
+@patch('services.repository_services.resilient_request')
 def test_get_repositories_server_error(mock_resilient_request):
     mock_resilient_request.return_value = {'items': 'test'}
     response = client.get("/repositories/popular?since_date=2023-06-01&language=python&top_n=100")
     assert response.status_code == 200
 
 
-@patch('app.services.repository_services.redis.Redis.get')
-@patch('app.services.repository_services.redis.Redis.set')
+@patch('services.repository_services.redis.Redis.get')
+@patch('services.repository_services.redis.Redis.set')
 @pytest.mark.asyncio
 async def test_cacheable_with_ttl_expired(mock_set, mock_get):
     mock_get.return_value = None
@@ -130,8 +130,8 @@ async def test_resilient_request_non_200_status():
             await resilient_request("search/repositories", {"q": "stars:>=1"})
 
 
-@patch('app.services.repository_services.redis.Redis.get')
-@patch('app.services.repository_services.redis.Redis.set')
+@patch('services.repository_services.redis.Redis.get')
+@patch('services.repository_services.redis.Redis.set')
 @pytest.mark.asyncio
 async def test_cacheable_with_cache_hit(mock_set, mock_get):
     mock_get.return_value = '{"result": "from cache"}'.encode()
@@ -145,8 +145,8 @@ async def test_cacheable_with_cache_hit(mock_set, mock_get):
     mock_set.assert_not_called()
 
 
-@patch('app.services.repository_services.redis.Redis.get')
-@patch('app.services.repository_services.redis.Redis.set')
+@patch('services.repository_services.redis.Redis.get')
+@patch('services.repository_services.redis.Redis.set')
 @pytest.mark.asyncio
 async def test_cacheable_with_cache_miss(mock_set, mock_get):
     mock_get.return_value = None
@@ -160,7 +160,7 @@ async def test_cacheable_with_cache_miss(mock_set, mock_get):
     mock_set.assert_called_once()
 
 
-@patch('app.services.repository_services.resilient_request')
+@patch('services.repository_services.resilient_request')
 def test_get_top_repositories(mock_resilient_request):
     mock_resilient_request.return_value = {'items': 'test'}
     response = client.get("/repositories/popular/10")
@@ -168,7 +168,7 @@ def test_get_top_repositories(mock_resilient_request):
     assert response.json() == 'test'
 
 
-@patch('app.services.repository_services.resilient_request')
+@patch('services.repository_services.resilient_request')
 def test_get_repositories_since(mock_resilient_request):
     mock_resilient_request.return_value = {'items': 'test'}
     response = client.get("/repositories/popular?since_date=2023-06-01&language=python&top_n=100")

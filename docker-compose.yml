@@ -1,8 +1,8 @@
 version: '3'
 
 services:
-  shopapothekeservice:
-    build: .
+  shopapotheke:
+    build: ./src
     command: |
       bash -c 'while !</dev/tcp/redis/6379; do sleep 1; done; uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8080'
     volumes:
